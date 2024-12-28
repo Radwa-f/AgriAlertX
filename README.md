@@ -244,7 +244,14 @@ Here are step-by-step instructions to set up and run AgriAlert locally:
                                        
 
 ## Video Demonstration
-[Placeholder for video demonstration]
+Here' an illustrative video of the android mobile app:
+
+<div align="center">
+
+[See The Video](https://github.com/user-attachments/assets/9bf06c0f-d11e-4906-8102-ea8581ed7989)
+
+
+</div>
 
 # Contributing
  
