@@ -1,0 +1,78 @@
+<resources>
+    <string name="app_name">Agri-Alert</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="swipe_left_for_register">Swipe Left for Register</string>
+    <string name="login">Login</string>
+    <string name="password">Password</string>
+    <string name="e_mail">Email</string>
+    <string name="tag">Please fill out your credentials !</string>
+    <string name="swipe_right_for_login">Swipe Right for Login</string>
+    <string name="register">Register</string>
+    <string name="re_type_password">Re-type Password</string>
+    <string name="your_name">Full Name</string>
+    <string name="loginText">Login</string>
+
+    <string name="profile_icon">Profile Icon</string>
+
+    <string name="chatbot_icon">Chatbot Icon</string>
+    <string name="send_message">Send Message</string>
+    <string name="alerts_icon">Alerts Icon</string>
+
+    <string-array name="crop_names">
+        <item>Rice</item>
+        <item>Wheat</item>
+        <item>Maize</item>
+        <item>Millets</item>
+        <item>Bajra (Pearl Millet)</item>
+        <item>Pulses (Kharif)</item>
+        <item>Lentil (Rabi)</item>
+        <item>Oilseeds</item>
+        <item>Groundnut</item>
+        <item>Sugarcane</item>
+        <item>Sugar beet</item>
+        <item>Cotton</item>
+        <item>Tea</item>
+        <item>Coffee</item>
+        <item>Cocoa</item>
+        <item>Rubber</item>
+        <item>Jute</item>
+        <item>Flax</item>
+        <item>Coconut</item>
+        <item>Oil-palm</item>
+        <item>Clove</item>
+        <item>Black Pepper</item>
+        <item>Cardamom</item>
+        <item>Turmeric</item>
+    </string-array>
+
+    <string-array name="crop_harvest_times">
+        <item>October-November</item> <!-- Rice -->
+        <item>March-April</item> <!-- Wheat -->
+        <item>July-August</item> <!-- Maize -->
+        <item>July-August</item> <!-- Millets -->
+        <item>June-July</item> <!-- Bajra -->
+        <item>August-September</item> <!-- Pulses -->
+        <item>November-December</item> <!-- Lentil -->
+        <item>July-August</item> <!-- Oilseeds -->
+        <item>August-September</item> <!-- Groundnut -->
+        <item>November-December</item> <!-- Sugarcane -->
+        <item>November-December</item> <!-- Sugar beet -->
+        <item>September-October</item> <!-- Cotton -->
+        <item>Throughout the year</item> <!-- Tea -->
+        <item>September-October</item> <!-- Coffee -->
+        <item>October-November</item> <!-- Cocoa -->
+        <item>Throughout the year</item> <!-- Rubber -->
+        <item>August-September</item> <!-- Jute -->
+        <item>June-July</item> <!-- Flax -->
+        <item>Throughout the year</item> <!-- Coconut -->
+        <item>Throughout the year</item> <!-- Oil-palm -->
+        <item>November-December</item> <!-- Clove -->
+        <item>December-January</item> <!-- Black Pepper -->
+        <item>September-October</item> <!-- Cardamom -->
+        <item>December-January</item> <!-- Turmeric -->
+    </string-array>
+    <string name="title_activity_location">LocationActivity</string>
+
+
+</resources>

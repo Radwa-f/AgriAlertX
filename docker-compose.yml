@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: agrialert
+    ports:
+      - "3307:3306" 
+    networks:
+      - agrialert-network
+
+  flask-api:
+    build:
+      context: ./flask_backend # Specify the folder for Flask API (where Dockerfile is located)
+      dockerfile: Dockerfile  # Specify the Dockerfile name if it's named differently, otherwise it's optional
+    container_name: agrialert-flask-api
+    ports:
+      - "8086:8086"
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/agrialert
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+    networks:
+      - agrialert-network
+
+  spring-boot-api:
+    build:
+      context: ./springboot_backend  # Specify the folder for Spring Boot API (where Dockerfile is located)
+      dockerfile: Dockerfile  # Same as Flask, specify the Dockerfile name if it's different
+    container_name: agrialert-spring-boot-api
+    ports:
+      - "8087:8087"
+    depends_on:
+      - mysql
+    networks:
+      - agrialert-network
+
+networks:
+  agrialert-network:
+    driver: bridge
