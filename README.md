@@ -1,4 +1,4 @@
-# AgriAlert: Agricultural Disaster Prevention and Alert System                                                            
+# 🌱🌦️ AgriAlert: Agricultural Disaster Prevention and Alert System                                                            
   
 <div align="center">
   <img src="https://github.com/user-attachments/assets/dfe52d6c-cfc8-441d-a95e-7a225b30ea7d" width="300" alt="AgriAlert Logo">
