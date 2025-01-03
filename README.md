@@ -18,7 +18,7 @@ This platform enables real-time agricultural risk monitoring based on weather fo
 - [Improvements](#improvements)
 
 ## Software architecture
-![AgriAlert Architecture](https://github.com/user-attachments/assets/61aff36c-049f-4ad5-86e4-492af3983c76)                    
+![AgriAlert Architecture](https://github.com/user-attachments/assets/2b80f13e-a7ee-4af8-8594-08c6fdf2db61)                    
   
 The application architecture uses Next.js for the web frontend, Kotlin/Swift for mobile clients, Spring Boot for the backend, and Flask for the chatbot service, with communication via RESTful APIs.
 
