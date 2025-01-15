@@ -1,7 +1,7 @@
 # 🌱🌦️ AgriAlert: Agricultural Disaster Prevention and Alert System                                                            
   
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/dfe52d6c-cfc8-441d-a95e-7a225b30ea7d" width="300" alt="AgriAlert Logo">
+  <img src="https://github.com/user-attachments/assets/0308a2f5-6203-4fac-aeca-2b84bad6fff7" width="300" alt="AgriAlert Logo">
 </div>
 
 This platform enables real-time agricultural risk monitoring based on weather forecasts, providing farmers with timely alerts and actionable recommendations to protect their crops from adverse weather conditions. Using open-source weather APIs and crop-specific threshold analysis, AgriAlert helps prevent agricultural losses through proactive notifications.
