@@ -253,7 +253,7 @@ Here are the illustrative videos of our apps, android mobile app, ios mobile app
 
 [See The IOSVideo](https://github.com/user-attachments/assets/5f3db54d-9df8-498b-92f1-78c4bf20cf24)</br>
 [See The Android Video](https://github.com/user-attachments/assets/e74adc7e-affa-4f2d-9ea1-e6e655a9c255)</br>
-[See The WEB Video](https://github.com/user-attachments/assets/2c856a28-3a5f-4f9f-bc76-6da66e5381ac)
+[See The WEB Video](https://github.com/user-attachments/assets/4f79c1e3-d094-4bbc-bad5-647c9bf8379f)
 
 
 </div>
