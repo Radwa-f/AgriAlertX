@@ -251,8 +251,8 @@ Here are the illustrative videos of our apps, android mobile app, ios mobile app
 
 <div align="center">
 
-[See The IOSVideo](https://github.com/user-attachments/assets/57b1bfc7-6ed4-4a97-8701-c1206a48b931)</br>
-[See The Android Video](https://github.com/user-attachments/assets/9bf06c0f-d11e-4906-8102-ea8581ed7989)</br>
+[See The IOSVideo](https://github.com/user-attachments/assets/a8d0e216-5fb8-48fe-88e1-b8a15bfe279f)</br>
+[See The Android Video](https://github.com/user-attachments/assets/e74adc7e-affa-4f2d-9ea1-e6e655a9c255)</br>
 [See The WEB Video](https://github.com/user-attachments/assets/2c856a28-3a5f-4f9f-bc76-6da66e5381ac)
 
 
