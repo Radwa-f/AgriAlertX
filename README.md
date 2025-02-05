@@ -167,8 +167,8 @@ Here are step-by-step instructions to set up and run AgriAlert locally:
 1. **Clone the Project:**
    - Clone the repository by running the following command:
      ```bash
-     git clone https://github.com/SaifeddineDouidy/AgriAlert_backend
-     cd AgriAlert_backend
+     git clone https://github.com/Radwa-f/AgriAlertX.git
+     cd AgriAlertX/Springboot_Backend
      ```
 
 2. **Install Backend Dependencies:**
@@ -191,7 +191,7 @@ Here are step-by-step instructions to set up and run AgriAlert locally:
 ### Web Frontend Setup:
 
 1. **Install Dependencies:**
-   - Navigate to the `web-client` directory:
+   - Navigate to the `Agrialert_Web` directory:
      ```bash
      cd web-client
      ```
@@ -227,7 +227,7 @@ Here are step-by-step instructions to set up and run AgriAlert locally:
 ### Chatbot Setup:
 
 1. **Install Python Dependencies:**
-   - Navigate to the `chatbot` directory:
+   - Navigate to the `Flask_Backend` directory:
      ```bash
      cd chatbot
      ```
