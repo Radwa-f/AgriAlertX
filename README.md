@@ -7,7 +7,7 @@
   </picture>
 </div>
 
-This platform enables real-time agricultural risk monitoring based on weather forecasts, providing farmers with timely alerts and actionable recommendations to protect their crops from adverse weather conditions. Using open-source weather APIs and crop-specific threshold analysis, AgriAlert helps prevent agricultural losses through proactive notifications.
+This platform enables real-time agricultural risk monitoring based on weather forecasts, providing farmers with timely alerts and actionable recommendations to protect their crops from adverse weather conditions. Using open-source weather APIs and crop-specific threshold analysis, AgriAlertX helps prevent agricultural losses through proactive notifications.
 
 ## Table of Contents
 
@@ -21,7 +21,7 @@ This platform enables real-time agricultural risk monitoring based on weather fo
 - [Improvements](#improvements)
 
 ## Software architecture
-![AgriAlert Architecture](https://github.com/user-attachments/assets/2b80f13e-a7ee-4af8-8594-08c6fdf2db61)                    
+![AgriAlertX Architecture](https://github.com/user-attachments/assets/2b80f13e-a7ee-4af8-8594-08c6fdf2db61)                    
   
 The application architecture uses Next.js for the web frontend, Kotlin/Swift for mobile clients, Spring Boot for the backend, and Flask for the chatbot service, with communication via RESTful APIs.
 
