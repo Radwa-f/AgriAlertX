@@ -7,7 +7,7 @@
   </picture>
 </div>
 
-This platform enables real-time agricultural risk monitoring based on weather forecasts, providing farmers with timely alerts and actionable recommendations to protect their crops from adverse weather conditions. Using open-source weather APIs and crop-specific threshold analysis, AgriAlertX helps prevent agricultural losses through proactive notifications.
+This platform enables real-time agricultural risk monitoring based on weather forecasts, providing farmers with timely alerts and actionable recommendations to protect their crops from adverse weather conditions. Using open-source weather APIs and crop-specific threshold analysis, X helps prevent agricultural losses through proactive notifications.
 
 ## Table of Contents
 
@@ -146,7 +146,7 @@ This structured organization ensures the application is scalable, maintainable, 
 ```
 
 ## Getting Started
-Here are step-by-step instructions to set up and run AgriAlert locally:
+Here are step-by-step instructions to set up and run AgriAlertX locally:
 
 ### Prerequisites:
 
