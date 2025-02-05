@@ -1,9 +1,9 @@
-# 🌱🌦️ AgriAlert: Agricultural Disaster Prevention and Alert System                                                            
+# 🌱🌦️ AgriAlertX: Agricultural Disaster Prevention and Alert System                                                            
 
 <div align="center">
   <picture>
-    <source srcset="https://github.com/user-attachments/assets/ae75dcb9-d33a-43ae-b40e-3b1edd20d572" media="(prefers-color-scheme: dark)">
-    <img src="https://github.com/user-attachments/assets/22ab9be6-66b8-476e-9ba1-371059ad0977" width="300" alt="AgriAlertX Logo">
+    <source srcset="https://github.com/user-attachments/assets/911c92e3-e9f8-4aaa-85ee-3f0a548ea628" media="(prefers-color-scheme: dark)">
+    <img src="https://github.com/user-attachments/assets/c2c68b06-0e01-4f55-b577-07cb76639166" width="300" alt="AgriAlertX Logo">
   </picture>
 </div>
 
