@@ -6,37 +6,26 @@ struct NewsTabView: View {
     @State private var filteredNews: [NewsItem] = []
 
     var body: some View {
-        VStack {
-            // Search Bar
-            TextField("Search", text: $searchText)
-                .padding()
-                .background(Color(.systemGray6))
-                .cornerRadius(10)
-                .padding(.horizontal)
-                .onChange(of: searchText) { oldValue, newValue in
-                    filterNews(query: newValue)
-                }
-
-
-            // News List
-            ScrollView {
-                VStack(spacing: 16) {
-                    ForEach(filteredNews) { news in
-                        NewsCardView(newsItem: news)
-                            .onTapGesture {
-                                if let urlString = news.url, let url = URL(string: urlString) {
-                                    UIApplication.shared.open(url)
+            VStack {
+                ScrollView {
+                    VStack(spacing: 16) { // Match spacing with CropsTabView
+                        ForEach(filteredNews) { news in
+                            NewsCardView(newsItem: news)
+                                .padding(.horizontal, 16) // Match horizontal padding
+                                .onTapGesture {
+                                    if let urlString = news.url, let url = URL(string: urlString) {
+                                        UIApplication.shared.open(url)
+                                    }
                                 }
-                            }
+                        }
                     }
+                    .padding(.horizontal, 16) // Match outer horizontal padding
                 }
-                .padding(.horizontal, 20)
+            }
+            .onAppear {
+                fetchNews()
             }
         }
-        .onAppear {
-            fetchNews()
-        }
-    }
 
     func fetchNews() {
         NewsAPI.shared.fetchNews(query: "agriculture", country: "ma", limit: 10) { result in
@@ -81,36 +70,57 @@ struct NewsCardView: View {
     let newsItem: NewsItem
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            // News Image
-            AsyncImage(url: URL(string: newsItem.image ?? "")) { image in
-                image
-                    .resizable()
-                    .scaledToFill()
-            } placeholder: {
-                Color(.systemGray4)
+            VStack(alignment: .leading, spacing: 8) {
+                // News Image
+                AsyncImage(url: URL(string: newsItem.image ?? "")) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } placeholder: {
+                    Color(.systemGray5)
+                }
+                .frame(width: 330)
+                .clipped()
+                .cornerRadius(12)
+
+                // News Title
+                               Text(newsItem.title ?? "No Title")
+                                   .font(.headline)
+                                   .foregroundColor(.primary)
+                                   .lineLimit(2)
+
+                               // News Description
+                               Text(truncatedDescription())
+                                   .font(.subheadline)
+                                   .foregroundColor(.secondary)
             }
-            .frame(height: 200)
-            .cornerRadius(12)
-
-            // News Title
-            Text(newsItem.title ?? "No Title")
-                .font(.headline)
-                .foregroundColor(.primary)
-                .lineLimit(2)
-
-            // News Description
-            Text(truncatedDescription())
-                .font(.subheadline)
-                .foregroundColor(.secondary)
+            .padding()
+            .background(Color.white)
+            .cornerRadius(16)
+            .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
         }
-        .padding(.horizontal,10)
-        .padding(.horizontal, 20)
-        .padding(.top, 20)
-        .background(Color.white)
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
-    }
+
+        // Function to split text into lines of up to 5 words
+        private func splitTextIntoLines(_ text: String) -> String {
+            let words = text.split(separator: " ")
+            var lines: [String] = []
+            var currentLine: [String] = []
+
+            for word in words {
+                currentLine.append(String(word))
+                if currentLine.count == 5 {
+                    lines.append(currentLine.joined(separator: " "))
+                    currentLine = []
+                }
+            }
+
+            // Add any remaining words to the last line
+            if !currentLine.isEmpty {
+                lines.append(currentLine.joined(separator: " "))
+            }
+
+            return lines.joined(separator: "\n")
+        }
     
     func truncatedDescription() -> String {
         guard let text = newsItem.text else { return "No Description" }
@@ -120,5 +130,4 @@ struct NewsCardView: View {
         return text
     }
 }
-
 

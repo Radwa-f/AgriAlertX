@@ -74,10 +74,27 @@ class APIClient {
                 }
         }
     
+    func updateLocation(token: String, locationRequest: LocationUpdateRequest, completion: @escaping (Result<Void, Error>) -> Void) {
+        let url = "\(baseURL)api/v1/user/location"
+        let headers: HTTPHeaders = ["Authorization": "Bearer \(token)"]
+        
+        AF.request(url, method: .put, parameters: locationRequest, encoder: JSONParameterEncoder.default, headers: headers)
+            .validate()
+            .response { response in
+                switch response.result {
+                case .success:
+                    completion(.success(()))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+    }
+
+    
     func getRandomImageURL(for query: String, completion: @escaping (Result<String, Error>) -> Void) {
-        let url = "https://api.unsplash.com/photos/random"
+        let url = "https://api.unsplash.com/photos/random?"
         let parameters: [String: Any] = [
-            "client_id": "SS9TfnNCVbvw9318k1VjoWy7je20hdrVy3_2BlgFmFE",
+            "client_id": "yoS8xzN2MxVaOd5pSey1n9yYckeCGmqD9DIiPKyB-D8",
             "query": query
         ]
         

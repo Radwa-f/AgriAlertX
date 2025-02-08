@@ -12,32 +12,33 @@ struct HomeView: View {
             VStack {
                 // Top Toolbar
                 HStack {
-                    // Left Icon
-                    Image(systemName: "person.circle.fill")
-                        .font(.system(size: 50))
-                        .foregroundColor(Color(hex: "#264d50"))
-                        .padding()
+                                    // Left Icon
+                                    NavigationLink(destination: ProfileView()) {
+                                        Image(systemName: "person.circle.fill")
+                                            .font(.system(size: 50))
+                                            .foregroundColor(Color(hex: "#264d50"))
+                                            .padding()
+                                    }
 
-                    Spacer()
+                                    Spacer()
 
-                    // Title
-                    Text("AgriAlert")
-                        .font(.system(size: 30, weight: .bold)) // Increased font size
-                        .foregroundColor(Color(hex: "#2c3e50")) // Darker title color
+                                    // Title
+                                    Text("AgriAlertX")
+                                        .font(.system(size: 30, weight: .bold)) // Increased font size
+                                        .foregroundColor(Color(hex: "#2c3e50")) // Darker title color
 
-                    Spacer()
+                                    Spacer()
 
-                    // Right Icon
-                    Image(systemName: "message.circle.fill")
-                        .font(.system(size: 50))
-                        .foregroundColor(Color(hex: "#264d50"))
-                        .padding()
-                        .onTapGesture {
-                            // Navigate to chatbot
-                            print("Chatbot tapped")
-                        }
-                }
-                .padding(.top, 0)
+                                    // Right Icon
+                    NavigationLink(destination: ChatBotView()) {
+                        Image(systemName: "message.circle.fill")
+                            .font(.system(size: 50))
+                            .foregroundColor(Color(hex: "#264d50"))
+                            .padding()
+                    }
+
+                                }
+                                .padding(.top, 0)
 
                 // Bottom Navigation Bar
                 TabView {

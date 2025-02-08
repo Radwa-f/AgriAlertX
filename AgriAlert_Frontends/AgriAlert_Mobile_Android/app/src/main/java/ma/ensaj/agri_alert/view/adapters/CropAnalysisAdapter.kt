@@ -85,11 +85,21 @@ class CropAnalysisAdapter(
 
         fun bind(cropName: String, analysis: CropAnalysis) {
             cropNameTextView.text = cropName
-            severityTextView.text = "Overall Severity: ${analysis.overallSeverity}"
+            severityTextView.text = "Overall Severity: ${analysis.overallSeverity.uppercase()}"
+
+            // Set text color based on severity level
+            val colorRes = when (analysis.overallSeverity.uppercase()) {
+                "HIGH" -> R.color.severity_high_text
+                "MEDIUM" -> R.color.severity_medium_text
+                "LOW" -> R.color.severity_low_text
+                else -> R.color.severity_low_text
+            }
+            severityTextView.setTextColor(itemView.context.getColor(colorRes))
 
             // Alerts
             val alerts = analysis.alerts.joinToString("\n") { "${it.title}: ${it.message}" }
             alertsTextView.text = alerts
         }
+
     }
 }

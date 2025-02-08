@@ -2,6 +2,8 @@ package ma.ensaj.agri_alert.network
 
 import ma.ensaj.agri_alert.model.AuthResponse
 import ma.ensaj.agri_alert.model.ChangePassword
+import ma.ensaj.agri_alert.model.ChatRequest
+import ma.ensaj.agri_alert.model.ChatResponse
 import ma.ensaj.agri_alert.model.CropAnalysisResponse
 import ma.ensaj.agri_alert.model.LocationUpdateRequest
 import ma.ensaj.agri_alert.model.LoginRequest
@@ -57,6 +59,7 @@ interface UserService {
         @Body request: ProfileUpdateRequest
     ): Response<Void>
 
-
+    @POST("api/chatbot")
+    suspend fun getChatResponse(@Body request: ChatRequest): Response<ChatResponse>
 
 }

@@ -15,8 +15,3 @@ public class Alert {
     private String message;
     private AlertSeverity severity;
 }
-
-
-
-
-

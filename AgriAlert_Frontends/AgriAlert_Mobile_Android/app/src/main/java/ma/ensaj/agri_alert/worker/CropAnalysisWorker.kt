@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -34,6 +35,18 @@ class CropAnalysisWorker(context: Context, workerParams: WorkerParameters) : Cor
 
         return try {
             // Fetch weather data
+            val userProfileResponse = withContext(Dispatchers.IO) {
+                RetrofitClient.instance.getUserProfile("Bearer $token")
+            }
+
+            if (!userProfileResponse.isSuccessful) return Result.failure()
+
+            val userProfile = userProfileResponse.body() ?: return Result.failure()
+            /*val latitude = userProfile.location?.latitude ?: return Result.failure()
+            val longitude = userProfile.location?.longitude ?: return Result.failure()*/
+
+            Log.d("CropAnalysisWorker", "Fetched location: Latitude = $latitude, Longitude = $longitude")
+
             val weatherResponse = withContext(Dispatchers.IO) {
                 WeatherApi.retrofitService.getWeather(
                     latitude = latitude,
@@ -49,10 +62,7 @@ class CropAnalysisWorker(context: Context, workerParams: WorkerParameters) : Cor
             val maxRain = weatherResponse.daily.precipitationSum.maxOrNull() ?: 0.0
             val minRain = weatherResponse.daily.precipitationSum.minOrNull() ?: 0.0
 
-            // Fetch crop analysis
-            val userProfileResponse = withContext(Dispatchers.IO) {
-                RetrofitClient.instance.getUserProfile("Bearer $token")
-            }
+
 
             if (userProfileResponse.isSuccessful) {
                 val userCrops = userProfileResponse.body()?.crops ?: return Result.failure()

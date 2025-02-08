@@ -97,7 +97,8 @@ struct LoginView: View {
             switch result {
             case .success(let token):
                 print("Login successful! Token: \(token)")
-                UserDefaults.standard.set(token, forKey: "JWT_TOKEN") // Save token locally
+                UserDefaults.standard.set(token, forKey: "JWT_TOKEN")
+                KeychainHelper.shared.save(key: "JWT_TOKEN", value: token) 
                 isLoggedIn = true // Navigate to Home screen
             case .failure(let error):
                 errorMessage = "Login failed: \(error.localizedDescription)"

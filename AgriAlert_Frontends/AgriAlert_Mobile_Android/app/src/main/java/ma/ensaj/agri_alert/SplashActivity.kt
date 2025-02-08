@@ -17,6 +17,8 @@ import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import ma.ensaj.agri_alert.service.CropAnalysisService
+import ma.ensaj.agri_alert.util.SharedPreferencesHelper
+import ma.ensaj.agri_alert.util.TokenHelper
 import ma.ensaj.agri_alert.worker.CropAnalysisWorker
 import java.util.concurrent.TimeUnit
 
@@ -54,7 +56,7 @@ class SplashActivity : AppCompatActivity() {
         val thread = Thread {
             try {
                 Thread.sleep(4000)
-                val intent = Intent(this@SplashActivity, MainActivity::class.java)
+                val intent = Intent(this, MainActivity::class.java) // Redirect to Login page
                 startActivity(intent)
                 finish()
             } catch (e: InterruptedException) {
@@ -64,13 +66,30 @@ class SplashActivity : AppCompatActivity() {
         thread.start()
     }
 
+    private fun navigateBasedOnSession() {
+        val token = SharedPreferencesHelper.getToken(this)
+
+        // Check if token exists and is valid
+        if (token.isNullOrEmpty() || TokenHelper.isTokenExpired(token)) {
+            // Token is either missing or expired
+            SharedPreferencesHelper.deleteToken(this) // Clear expired token
+            val intent = Intent(this, MainActivity::class.java) // Redirect to Login page
+            startActivity(intent)
+        } else {
+            // Token is valid
+            val intent = Intent(this, HomeActivity::class.java) // Redirect to Home page
+            startActivity(intent)
+        }
+        finish()
+    }
+
     private fun startCropAnalysisWorker() {
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
         val workRequest = PeriodicWorkRequestBuilder<CropAnalysisWorker>(
-            2, TimeUnit.SECONDS // Repeat every 6 hours
+            2, TimeUnit.HOURS // Repeat every 6 hours
         )
             .setConstraints(constraints)
             .build()

@@ -12,10 +12,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ma.ensaj.agri_alert.databinding.ActivityChatBotBinding
-import ma.ensaj.agri_alert.network.ChatBotApi
-import ma.ensaj.agri_alert.network.ChatRequest
+import ma.ensaj.agri_alert.model.ChatRequest
+import ma.ensaj.agri_alert.network.RetrofitClient
 
-import ma.ensaj.agri_alert.network.ChatResponse
+
 
 
 class ChatBotActivity : AppCompatActivity() {
@@ -57,17 +57,21 @@ class ChatBotActivity : AppCompatActivity() {
         adapter.notifyItemInserted(chatMessages.size - 1)
         binding.rvChatConversation.scrollToPosition(chatMessages.size - 1)
 
-        // Call the chatbot API
+        // Call the chatbot API through RetrofitClient
         lifecycleScope.launch {
             try {
                 val response = withContext(Dispatchers.IO) {
-                    ChatBotApi.chatbotService.getChatResponse(ChatRequest(userMessage))
+                    RetrofitClient.instance.getChatResponse(ChatRequest(userMessage))
                 }
 
-                // Add chatbot response to the chat
-                chatMessages.add(Pair("Bot", response.response))
-                adapter.notifyItemInserted(chatMessages.size - 1)
-                binding.rvChatConversation.scrollToPosition(chatMessages.size - 1)
+                if (response.isSuccessful) {
+                    chatMessages.add(Pair("Bot", response.body()?.response ?: "No response"))
+                    adapter.notifyItemInserted(chatMessages.size - 1)
+                    binding.rvChatConversation.scrollToPosition(chatMessages.size - 1)
+                } else {
+                    Log.e("ChatBotActivity", "API Error: ${response.errorBody()?.string()}")
+                    Toast.makeText(this@ChatBotActivity, "Error from chatbot", Toast.LENGTH_SHORT).show()
+                }
             } catch (e: Exception) {
                 Log.e("ChatBotActivity", "Error calling chatbot API: ${e.message}")
                 Toast.makeText(this@ChatBotActivity, "Failed to connect to chatbot", Toast.LENGTH_SHORT).show()

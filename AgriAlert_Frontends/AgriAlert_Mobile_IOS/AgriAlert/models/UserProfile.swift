@@ -39,3 +39,12 @@ struct UserLocation: Decodable {
 struct Authority: Decodable {
     let authority: String
 }
+
+struct LocationUpdateRequest: Encodable {
+    let latitude: Double
+    let longitude: Double
+}
+struct AlertItem: Identifiable {
+    let id = UUID()
+    let message: String
+}

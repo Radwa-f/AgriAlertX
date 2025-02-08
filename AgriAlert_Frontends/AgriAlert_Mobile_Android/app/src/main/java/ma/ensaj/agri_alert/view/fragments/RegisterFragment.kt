@@ -138,7 +138,7 @@ class RegisterFragment : Fragment() {
                 if (location != null) {
                     latitude = location.latitude
                     longitude = location.longitude
-                    showToast("Location fetched: $latitude, $longitude")
+                    showToast("Location fetched")
                 } else {
                     showToast("Unable to fetch location. Please try again.")
                 }

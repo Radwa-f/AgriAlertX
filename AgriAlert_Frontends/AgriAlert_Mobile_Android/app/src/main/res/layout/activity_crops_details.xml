@@ -50,7 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="AgriAlert"
+            android:text="AgriAlertX"
             android:textColor="@color/my_dark"
             android:textSize="28sp"
             android:textStyle="bold"
@@ -79,21 +79,22 @@
         </androidx.cardview.widget.CardView>
     </androidx.appcompat.widget.Toolbar>
 
+    <!-- Updated ScrollView constraints -->
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:ignore="MissingConstraints"
-        android:layout_marginTop="30dp"
-        tools:layout_editor_absoluteX="24dp"
-        tools:layout_editor_absoluteY="70dp"
-        android:padding="16dp">
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@id/custom_toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp"
-            tools:ignore="MissingConstraints">
+            android:padding="20dp">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/card"

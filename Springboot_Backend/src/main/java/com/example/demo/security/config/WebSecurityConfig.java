@@ -43,7 +43,7 @@ public class WebSecurityConfig {
                         .requestMatchers(
                                 "/api/v1/login/**",
                                 "/api/v1/registration/**",
-                                "/api/crops/**",
+                                "/api/crops/**","/api/chatbot/**",
                                 "/swagger-ui/**", "/v3/api-docs/**",
                                 "/forgotPassword/**",
                                 "/changePassword/**"

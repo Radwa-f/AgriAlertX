@@ -59,4 +59,13 @@ object SharedPreferencesHelper {
             null
         }
     }
+
+    fun deleteToken(context: Context) {
+        val sharedPreferences = context.getSharedPreferences(PREFS_NAME, AppCompatActivity.MODE_PRIVATE)
+        with(sharedPreferences.edit()) {
+            remove("AUTH_TOKEN")
+            apply()
+        }
+    }
+
 }

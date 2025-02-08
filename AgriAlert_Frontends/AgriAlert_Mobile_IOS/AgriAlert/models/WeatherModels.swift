@@ -34,10 +34,11 @@ struct Hourly: Codable {
     }
 }
 
-struct MyAlert: Identifiable {
+struct MyAlert: Identifiable, Decodable {
     let id = UUID()
     let title: String
     let reason: String
     let description: String
     let severity: String
 }
+

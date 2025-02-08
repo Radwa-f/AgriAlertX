@@ -49,3 +49,7 @@ struct SplashView: View {
         }
     }
 }
+
+#Preview {
+    SplashView()
+}

@@ -93,16 +93,39 @@ struct CropsTabView: View {
                     switch analysisResult {
                     case .success(let cropAnalysisResponse):
                         print("DEBUG: Crop analysis response: \(cropAnalysisResponse)")
-
-                        DispatchQueue.main.async {
-                            let fallbackURL = "https://via.placeholder.com/600x400?text=Image+Unavailable"
-                            self.cropAnalysisList = cropAnalysisResponse.cropAnalyses.map { key, value in
-                                CropAnalysisItem(
-                                    cropName: key,
-                                    analysis: value,
-                                    imageURL: value.imageURL ?? fallbackURL // Add fallback URL here
-                                )
+                        
+                        // Create a dispatch group to handle multiple async image fetches
+                        let group = DispatchGroup()
+                        var cropItems: [CropAnalysisItem] = []
+                        
+                        for (key, value) in cropAnalysisResponse.cropAnalyses {
+                            group.enter()
+                            
+                            // Fetch image for each crop
+                            APIClient.shared.getRandomImageURL(for: key) { result in
+                                switch result {
+                                case .success(let imageURL):
+                                    let item = CropAnalysisItem(
+                                        cropName: key,
+                                        analysis: value,
+                                        imageURL: imageURL
+                                    )
+                                    cropItems.append(item)
+                                case .failure(let error):
+                                    print("DEBUG: Failed to fetch image for \(key): \(error)")
+                                    let item = CropAnalysisItem(
+                                        cropName: key,
+                                        analysis: value,
+                                        imageURL: "https://via.placeholder.com/600x400?text=Image+Unavailable"
+                                    )
+                                    cropItems.append(item)
+                                }
+                                group.leave()
                             }
+                        }
+                        
+                        group.notify(queue: .main) {
+                            self.cropAnalysisList = cropItems
                             isLoading = false
                         }
                     case .failure(let error):
@@ -134,21 +157,20 @@ struct CropCardView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             // Use Kingfisher for image loading
-            KFImage(URL(string: crop.imageURL ?? "https://via.placeholder.com/600x400?text=Image+Unavailable"))
+            KFImage(URL(string: crop.imageURL))
                 .placeholder {
-                    Color.gray // Display a gray box while the image is loading
-                        .frame(height: 200)
-                        .cornerRadius(12)
+                    ProgressView() // Show a loading spinner instead of gray box
                 }
                 .onSuccess { result in
-                    print("DEBUG: Successfully fetched image: \(result.source.url?.absoluteString ?? "Unknown URL")")
+                    print("DEBUG: Successfully fetched image for \(crop.cropName)")
                 }
                 .onFailure { error in
-                    print("DEBUG: Failed to fetch image: \(error.localizedDescription)")
+                    print("DEBUG: Failed to fetch image for \(crop.cropName): \(error.localizedDescription)")
                 }
                 .resizable()
-                .scaledToFill()
+                .aspectRatio(contentMode: .fill) // Use aspectRatio instead of scaledToFill
                 .frame(height: 200)
+                .clipped() // Add clipped() to prevent image overflow
                 .cornerRadius(12)
 
             // Crop Name

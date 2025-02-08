@@ -24,7 +24,7 @@ public class CropService {
     private static final Map<String, Crops> cropData = new HashMap<>();
 
     static {
-        // Populate crop data
+
         cropData.put("Rice", new Crops("Rice", 15, 27, 100, 150));
         cropData.put("Wheat", new Crops("Wheat", 12, 25, 25, 75));
         cropData.put("Maize", new Crops("Maize", 15, 27, 65, 125));
