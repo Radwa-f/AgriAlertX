@@ -183,7 +183,7 @@ services:
 
   flask:
     build: ./chatbot
-    ports: ["8086:8086"]
+    ports: ["5000:5000"]
     depends_on: [mysql]
 
   spring:
@@ -220,7 +220,7 @@ docker compose up --build
 - Spring Boot: http://localhost:8087  
 - ML service: http://localhost:8001/ml/status  
 - Web: http://localhost:3000  
-- Chatbot: http://localhost:8086  
+- Chatbot: http://localhost:5000  
 
 ---
 
@@ -316,8 +316,8 @@ python chat.py  # adjust host/port as needed
 
 <div align="center">
 
-[▶ iOS Demo](https://github.com/user-attachments/assets/5f3db54d-9df8-498b-92f1-78c4bf20cf24)  
-[▶ Android Demo](https://github.com/user-attachments/assets/e74adc7e-affa-4f2d-9ea1-e6e655a9c255)  
+[▶ Android Demo](https://github.com/user-attachments/assets/92a0e54f-6e8f-4512-a3e2-a383761b4b60) 
+[▶ iOS Demo](https://github.com/user-attachments/assets/5f3db54d-9df8-498b-92f1-78c4bf20cf24)   
 [▶ Web Demo](https://github.com/user-attachments/assets/4f79c1e3-d094-4bbc-bad5-647c9bf8379f)
 
 </div>
