@@ -1,277 +1,354 @@
-# 🌱🌦️ AgriAlertX: Agricultural Disaster Prevention and Alert System                                                            
+# 🌱🌦️ AgriAlertX — Agricultural Risk Alerts & Recommendations
 
 <div align="center">
   <picture>
     <source srcset="https://github.com/user-attachments/assets/911c92e3-e9f8-4aaa-85ee-3f0a548ea628" media="(prefers-color-scheme: dark)">
-    <img src="https://github.com/user-attachments/assets/c2c68b06-0e01-4f55-b577-07cb76639166" width="300" alt="AgriAlertX Logo">
+    <img src="https://github.com/user-attachments/assets/c2c68b06-0e01-4f55-b577-07cb76639166" width="260" alt="AgriAlertX Logo">
   </picture>
 </div>
 
-This platform enables real-time agricultural risk monitoring based on weather forecasts, providing farmers with timely alerts and actionable recommendations to protect their crops from adverse weather conditions. Using open-source weather APIs and crop-specific threshold analysis, X helps prevent agricultural losses through proactive notifications.
+AgriAlertX delivers real-time crop risk monitoring and actionable recommendations by fusing weather forecasts, crop tolerance profiles, and a lightweight ML model. It ships as a full stack: **Android & iOS apps**, **Next.js web**, a **Spring Boot API**, a **Python FastAPI ML microservice**, and a **Flask chatbot**—all wired through REST.
 
-## Table of Contents
+---
 
-- [Software Architecture](#software-architecture)
-- [Docker Image](#docker-image)
-- [Frontend](#frontend)
-- [Backend](#backend)
-- [Getting Started](#getting-started)
-- [Video Demonstration](#video-demonstration)
+## Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Monorepo Layout](#monorepo-layout)
+- [Architecture](#architecture)
+- [APIs](#apis)
+- [Metrics (Model Quality)](#metrics-model-quality)
+- [Quick Start (Docker)](#quick-start-docker)
+- [Local Dev (Per Service)](#local-dev-per-service)
+- [Configuration](#configuration)
+- [Environment Variables](#environment-variables)
+- [Testing & QA](#testing--qa)
+- [Troubleshooting](#troubleshooting)
+- [Roadmap](#roadmap)
 - [Contributing](#contributing)
-- [Improvements](#improvements)
+- [License](#license)
 
-## Software architecture
-![AgriAlertX Architecture](https://github.com/user-attachments/assets/9b79aeae-16af-4497-bda9-58dd1286fbf0)                    
-  
-The application architecture uses Next.js for the web frontend, Kotlin/Swift for mobile clients, Spring Boot for the backend, and Flask for the chatbot service, with communication via RESTful APIs.
+---
 
-## Docker Image
-```sh
+## Overview
+
+- **Goal:** Warn farmers before weather-driven crop stress (heat/cold, drought/flood risk, humidity disease pressure) and suggest practical mitigations.
+- **How:** Fetch hourly/daily forecast → normalize → rule checks vs. crop envelopes → **ML top-k crop suitability** → generate crop-specific recommendations.
+- **Why hybrid:** Rules offer **explainability**; ML adds **probabilistic lift** and alternative crop suggestions when conditions fit other crops better.
+
+---
+
+## Features
+
+- 🔔 Multi-platform clients (Android, iOS, Web) with native notifications
+- 🌤️ Weather ingestion (Open-Meteo—no API key required)
+- 🌾 Crop envelopes (min/max temp/rain/RH) + GDD driven timing
+- 🤖 FastAPI ML microservice (scikit-learn pipeline) with graceful fallbacks
+- 🧠 Flask chatbot for agronomic Q&A around alerts
+- 🐳 One-command Docker Compose for the full stack
+
+---
+
+## Monorepo Layout
+
+```
+AgriAlertX/
+├─ android-app/                    # Kotlin client
+├─ ios-app/                        # Swift client
+├─ web-client/                     # Next.js (TypeScript + Tailwind)
+├─ springboot_backend/             # API gateway & orchestration (Java/Spring Boot)
+├─ chatbot/                        # Flask chatbot service
+├─ Analysis_Model/                 # FastAPI ML service (predict + recommendations)
+├─ docker-compose.yml
+└─ README.md
+```
+
+---
+
+## Architecture
+
+![AgriAlertX Architecture](https://github.com/user-attachments/assets/2a9d6b42-c592-4865-ac46-c5bed44c06a0)
+
+- **Clients:** Android, iOS, and Web call the **Spring Boot API**.
+- **Spring Boot API:** Fetches weather (Open-Meteo), applies safety checks, calls **ML service**, merges outputs, returns alerts + recommendations.
+- **FastAPI ML:** Multinomial Logistic Regression (StandardScaler + LogisticRegression). Endpoints: `/health`, `/ml/status`, `/analyze`.
+- **Flask Chatbot:** Q&A and guidance around alerts and agronomic practices.
+
+---
+
+## APIs
+
+### Spring Boot (default `http://localhost:8087`)
+**POST** `/api/crops/weather-analysis/auto`
+```json
+{
+  "latitude": 34.02,
+  "longitude": -6.83,
+  "cropNames": ["Wheat", "Maize", "Coffee"]
+}
+```
+
+**Response (excerpt)**
+```json
+{
+  "cropAnalyses": {
+    "Wheat": {
+      "overallSeverity": "MEDIUM",
+      "alerts": [{ "title": "High Temperature Alert", "severity": "MEDIUM", "message": "..." }],
+      "recommendations": [{ "message": "..." }],
+      "insights": [
+        "Max temperature deviation: 12.0%, Min temperature deviation: 0.0%",
+        "ML top prediction: muskmelon (53.2%).",
+        "Assumed soil pH = 6.5 for ML features."
+      ]
+    }
+  },
+  "errors": []
+}
+```
+
+### FastAPI ML (default `http://localhost:8001`)
+- `GET /health` → `{"ok": true}`
+- `GET /ml/status` → `{ loaded, ok, meta: { features, classes, metrics } }`
+- `POST /analyze` → accepts weather slices + crops, returns per-crop analysis.
+
+### Flask Chatbot (default `http://localhost:8086`)
+- `POST /chat` → `{ "message": "..." }` → chatbot reply.
+
+---
+
+## Metrics (Model Quality)
+
+Hold-out and CV on crop recommendation dataset (**temperature, humidity, rainfall, pH**; graceful fallback when pH missing).
+
+| Setting            | Accuracy | Macro-F1 | Notes                              |
+| ------------------ | :------: | :------: | ---------------------------------- |
+| **with pH**        |  **0.793**  | **0.787** | Best offline scores                |
+| **assumed pH=6.5** |   0.732  |  0.696   | Degrades when soil pH not provided |
+| **5-fold CV**      | 0.782±0.010 | 0.774±0.012 | Stable across folds                |
+
+> Reproduce:
+> `python Analysis_Model/evaluate.py --data Crop_recommendation.csv --model crop_suitability_lr.pkl --assumed_ph 6.5 --out metrics.json`
+
+---
+
+## Quick Start (Docker)
+
+Create a root `.env` (or inject via your orchestrator):
+
+```env
+# Database
+MYSQL_ROOT_PASSWORD=secret
+MYSQL_DATABASE=agrialert
+MYSQL_USER=agrialert
+MYSQL_PASSWORD=agripass
+
+# Spring Boot
+SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/agrialert
+SPRING_DATASOURCE_USERNAME=agrialert
+SPRING_DATASOURCE_PASSWORD=agripass
+ML_BASE_URL=http://ml:8001
+
+# Web client
+NEXT_PUBLIC_API_BASE=http://localhost:8087
+```
+
+`docker-compose.yml`:
+
+```yaml
+version: "3.9"
 services:
   mysql:
     image: mysql:8.0
-    container_name: mysql-container
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: agrialert
-    ports:
-      - "3307:3306"
-    networks:
-      - agrialert-network
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports: ["3307:3306"]
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u${MYSQL_USER}", "-p${MYSQL_PASSWORD}"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
 
-  flask-api:
-    build:
-      context: ./flask_backend
-      dockerfile: Dockerfile
-    container_name: agrialert-flask-api
-    ports:
-      - "8086:8086"
-    depends_on:
-      mysql:
-        condition: service_healthy
+  ml:
+    build: ./Analysis_Model
+    command: uvicorn main:app --host 0.0.0.0 --port 8001
+    ports: ["8001:8001"]
+    depends_on: [mysql]
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/agrialert
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: password
-    networks:
-      - agrialert-network
+      PYTHONUNBUFFERED: "1"
 
-  spring-boot-api:
-    build:
-      context: ./springboot_backend
-      dockerfile: Dockerfile
-    container_name: agrialert-spring-boot-api
-    ports:
-      - "8087:8087"
+  flask:
+    build: ./chatbot
+    ports: ["8086:8086"]
+    depends_on: [mysql]
+
+  spring:
+    build: ./springboot_backend
+    ports: ["8087:8087"]
+    environment:
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      ML_BASE_URL: ${ML_BASE_URL}
     depends_on:
       mysql:
         condition: service_healthy
-    networks:
-      - agrialert-network
+      ml:
+        condition: service_started
+
+  web:
+    build: ./web-client
+    ports: ["3000:3000"]
+    environment:
+      NEXT_PUBLIC_API_BASE: ${NEXT_PUBLIC_API_BASE}
 
 networks:
-  agrialert-network:
+  default:
     driver: bridge
 ```
 
-## Frontend
+Run everything:
 
-### Technologies Used
-- Next.js (Web)
-- Kotlin (Android)
-- Swift (iOS)
-- Tailwind CSS
-- TypeScript
-
-## Backend
-
-### Technologies Used
-- Spring Boot
-- MySQL
-- Flask (Chatbot)
-
-## Backend Project Structure
-
-The backend code follows a modular and organized structure, leveraging the power of Spring Boot for building a robust and scalable application.
-
-### 1. com.example.demo
-- *Main Application Class:* DemoApplication.java serves as the entry point for the Spring Boot application. It includes the main method to bootstrap and start the application.
-
-### 2. com.example.demo.controller
-- *Controller Layer:* This package contains classes responsible for handling incoming HTTP requests. Each controller defines RESTful endpoints for specific features or entities and delegates the request processing to the service layer.
-
-### 3. com.example.demo.model
-- *Entity Layer:* The model package includes classes representing data entities in the application. These classes use JPA annotations to define the structure of the corresponding database tables, ensuring seamless ORM mapping.
-
-### 4. com.example.demo.repository
-- *Repository Layer:* This package contains interfaces extending Spring Data JPA repository interfaces. These provide built-in methods for CRUD operations and enable interaction with the database without requiring boilerplate code.
-
-### 5. com.example.demo.security
-- *Security Configuration:* The security package includes classes for configuring authentication and authorization mechanisms. This might involve defining roles, managing user credentials, and securing endpoints based on roles or permissions.
-
-### 6. com.example.demo.service
-- *Service Layer:* This package contains business logic for the application. Services interact with the repository layer to fetch or modify data and provide processed information to the controller layer.
-
-### 7. com.example.demo.utils
-- *Utility Classes:* The utils package includes helper or utility classes that provide commonly used functionality across the application. These might include functions for validation, formatting, or other reusable logic.
-
-### Additional Files and Directories:
-- **resources Folder:** This contains application configuration files like application.properties or application.yml, along with other static resources.
-- **Dockerfile:** Defines the steps to containerize the Spring Boot application for deployment.
-- **pom.xml:** The Maven configuration file, managing dependencies and build configurations for the project.
-- **.gitignore:** Specifies files and directories to be excluded from version control.
-
-This structured organization ensures the application is scalable, maintainable, and adheres to the separation of concerns principle.                                        
-  
-  
-
-### Dependencies
-
-```xml
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-data-jpa</artifactId>
-</dependency>
-<dependency>
-    <groupId>mysql</groupId>
-    <artifactId>mysql-connector-java</artifactId>
-    <scope>runtime</scope>
-</dependency>
-// Other dependencies are in the pom.xml
+```bash
+docker compose up --build
 ```
 
-## Getting Started
-Here are step-by-step instructions to set up and run AgriAlertX locally:
+- Spring Boot: http://localhost:8087  
+- ML service: http://localhost:8001/ml/status  
+- Web: http://localhost:3000  
+- Chatbot: http://localhost:8086  
 
-### Prerequisites:
+---
 
-1. **Git:**
-   - Ensure you have Git installed. If not, download and install it from [git-scm.com](https://git-scm.com/).
+## Local Dev (Per Service)
 
-2. **MySQL:**
-   - Install MySQL Server.
-   - Create a database named `agrialert`.
-   - Ensure MySQL is running on port 3306.
+### ML Service (FastAPI)
+```bash
+cd Analysis_Model
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+# Optional: retrain
+python train.py --data Crop_recommendation.csv --out crop_suitability_lr.pkl
+# Serve
+uvicorn main:app --reload --port 8001
+```
 
-3. **Node.js:**
-   - Install Node.js (LTS version) from [nodejs.org](https://nodejs.org/).
+### Spring Boot
+```bash
+cd springboot_backend
+# set ML_BASE_URL=http://localhost:8001
+./mvnw spring-boot:run
+```
 
+### Web (Next.js)
+```bash
+cd web-client
+npm install
+npm run dev
+```
 
-### Backend Setup:
+### Android / iOS
+- Update base URLs to point at your Spring Boot instance.
+- Build & run from Android Studio / Xcode.
+- Uses **native** notifications on both platforms.
 
-1. **Clone the Project:**
-   - Clone the repository by running the following command:
-     ```bash
-     git clone https://github.com/Radwa-f/AgriAlertX.git
-     cd AgriAlertX/Springboot_Backend
-     ```
+### Chatbot (Flask)
+```bash
+cd chatbot
+pip install -r requirements.txt
+python chat.py  # adjust host/port as needed
+```
 
-2. **Install Backend Dependencies:**
-   - Open a terminal in the backend project folder.
-   - Run the following command to install dependencies:
-     ```bash
-     mvn clean install
-     ```
+---
 
-3. **Configure Application Properties:**
-   - Update the `application.properties` file with your MySQL credentials.
-   - Configure the OpenMeteo API key if required.
+## Configuration
 
-4. **Run Backend:**
-   - Start your XAMPP Apache and MySQL servers.
-   - Run the Spring Boot application. The database and entities will be created automatically.
-   - Verify that the backend is running at [http://localhost:8087](http://localhost:8087).
-       
+- **Spring Boot**: `application.yml` reads `ML_BASE_URL` → FastAPI `/analyze`.
+- **Weather**: Open-Meteo (no API key). Ensure outbound network from Spring container.
+- **CORS**: Allow your mobile/web origins on the Spring Boot layer.
+- **Secrets**: Inject via env; never commit credentials.
 
-### Web Frontend Setup:
+---
 
-1. **Install Dependencies:**
-   - Navigate to the `Agrialert_Web` directory:
-     ```bash
-     cd web-client
-     ```
-   - Install the necessary dependencies by running:
-     ```bash
-     npm install
-     ```
+## Environment Variables
 
-2. **Run Frontend:**
-   - Start the development server by running:
-     ```bash
-     npm run dev
-     ```
+| Variable | Service | Default / Example | Purpose |
+| --- | --- | --- | --- |
+| `SPRING_DATASOURCE_URL` | Spring | `jdbc:mysql://mysql:3306/agrialert` | DB connection |
+| `SPRING_DATASOURCE_USERNAME` | Spring | `agrialert` | DB user |
+| `SPRING_DATASOURCE_PASSWORD` | Spring | `agripass` | DB pass |
+| `ML_BASE_URL` | Spring | `http://ml:8001` | FastAPI endpoint |
+| `NEXT_PUBLIC_API_BASE` | Web | `http://localhost:8087` | API base for frontend |
+| `MYSQL_*` | MySQL | see `.env` | DB bootstrap |
 
-3. **Access the Web Interface:**
-   - Open your browser and navigate to [http://localhost:3000](http://localhost:3000) to access the web interface.
+---
 
+## Testing & QA
 
-### Mobile Frontend Setup:
+- **Unit / Integration**
+  - Spring: `./mvnw test`
+  - ML/Chatbot: `pytest`
+  - Web: `npm test`
+- **Contracts**: Test `/api/crops/weather-analysis/auto` and `/ml/status` in CI (schemas/payloads).
+- **Static Analysis**: SonarQube (Java/TS/Python scanning).
+- **Health**: `/health` (ML), Spring Actuator if enabled.
 
-1. **Android:**
-   - Open the Android project in **Android Studio**.
-   - Update the API endpoint in the configuration files.
-   - Build and run the application on your device or emulator.
+---
 
-2. **iOS:**
-   - Open the iOS project in **Xcode**.
-   - Update the API endpoint in the configuration files.
-   - Build and run the application on your device or simulator.
+## Troubleshooting
 
+- **`ml.base-url` not resolved** → Set `ML_BASE_URL` env or define `ml.base-url` in `application.yml`.
+- **Pickle / scikit-learn mismatch** → Align versions or retrain:
+  ```bash
+  pip install scikit-learn==1.5.2
+  python Analysis_Model/train.py --data Crop_recommendation.csv --out crop_suitability_lr.pkl
+  ```
+- **CORS errors** → Configure Spring CORS to include web/emulator origins.
+- **No humidity in weather** → Engine falls back gracefully; note appears in `insights`.
 
+---
 
-### Chatbot Setup:
-
-1. **Install Python Dependencies:**
-   - Navigate to the `Flask_Backend` directory:
-     ```bash
-     cd chatbot
-     ```
-   - Install the required Python dependencies by running:
-     ```bash
-     pip install -r requirements.txt
-     ```
-
-2. **Run Chatbot Server:**
-   - Start the chatbot server by running:
-     ```bash
-     python chat.py
-     ```
-
-3. **Access Chatbot Service:**
-   - The chatbot service will be available at [http://localhost:5000](http://localhost:5000).
-                                       
-
-## Video Demonstration
-Here are the illustrative videos of our apps, android mobile app, ios mobile app and the web app:
+## Demo Videos
 
 <div align="center">
 
-[See The IOSVideo](https://github.com/user-attachments/assets/5f3db54d-9df8-498b-92f1-78c4bf20cf24)</br>
-[See The Android Video](https://github.com/user-attachments/assets/e74adc7e-affa-4f2d-9ea1-e6e655a9c255)</br>
-[See The WEB Video](https://github.com/user-attachments/assets/4f79c1e3-d094-4bbc-bad5-647c9bf8379f)
-
+[▶ iOS Demo](https://github.com/user-attachments/assets/5f3db54d-9df8-498b-92f1-78c4bf20cf24)  
+[▶ Android Demo](https://github.com/user-attachments/assets/e74adc7e-affa-4f2d-9ea1-e6e655a9c255)  
+[▶ Web Demo](https://github.com/user-attachments/assets/4f79c1e3-d094-4bbc-bad5-647c9bf8379f)
 
 </div>
 
-# Contributing
- 
-We welcome contributions from everyone, and we appreciate your help to make this project even better! If you would like to contribute, please follow these guidelines:
+---
 
-## Contributors
-- Fattouhi Radwa ([GitHub](https://github.com/Radwa-f))
-- Douidy Sifeddine ([GitHub](https://github.com/SaifeddineDouidy))                    
-- Mohamed Lachgar ([Researchgate](https://www.researchgate.net/profile/Mohamed-Lachgar)) 
+## Roadmap
 
+- Add soil (pH/EC) from sensors or farmer input in the apps.
+- Expand ML features and retrain with regional datasets.
+- On-device caching & offline recommendations.
+- IoT sensor integration for micro-climate accuracy.
 
-### Improvements:
+---
 
-- Ensure clean, maintainable, and scalable code through automated reviews.
-- Code Quality Maintenance.
-- Integrate IoT sensors for more accurate data.
-- AI-Based Enhancements.
-- Enhance architecture for larger datasets and dynamic alerting systems.
+## Contributing
+
+We welcome PRs! Please:
+
+1. Fork the repo, create a feature branch.
+2. Add tests where relevant.
+3. Run linters/formatters (`mvn fmt`, `flake8/black`, `eslint`).
+4. Open a PR with a clear description and screenshots if UI changes.
+
+**Contributors**
+- Fattouhi Radwa — [GitHub](https://github.com/Radwa-f)  
+- Douidy Sifeddine — [GitHub](https://github.com/SaifeddineDouidy)  
+- Mohamed Lachgar — [ResearchGate](https://www.researchgate.net/profile/Mohamed-Lachgar)
+
+---
+
+## License
+
+See `LICENSE` for details.
