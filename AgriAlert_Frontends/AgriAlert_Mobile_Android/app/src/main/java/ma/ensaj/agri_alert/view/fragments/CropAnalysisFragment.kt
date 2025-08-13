@@ -17,10 +17,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ma.ensaj.agri_alert.R
 import ma.ensaj.agri_alert.model.CropAnalysis
-import ma.ensaj.agri_alert.model.WeatherAnalysisRequest
+import ma.ensaj.agri_alert.model.WeatherAnalysisAutoRequest
 import ma.ensaj.agri_alert.network.RetrofitClient
-import ma.ensaj.agri_alert.network.WeatherApi
 import ma.ensaj.agri_alert.util.SharedPreferencesHelper
+import java.util.Locale
+import java.util.regex.Pattern
+
 import ma.ensaj.agri_alert.view.adapters.CropAnalysisAdapter
 
 class CropAnalysisFragment : Fragment() {
@@ -106,35 +108,16 @@ class CropAnalysisFragment : Fragment() {
                         // Fetch weather data
                         val latitude = userProfile.location?.latitude
                         val longitude = userProfile.location?.longitude
-                        if (latitude != null && longitude != null) {
-                            val weatherResponse = withContext(Dispatchers.IO) {
-                                WeatherApi.retrofitService.getWeather(
-                                    latitude = latitude,
-                                    longitude = longitude,
-                                    daily = "temperature_2m_max,temperature_2m_min,precipitation_sum",
-                                    hourly = "precipitation",
-                                    timezone = "auto"
-                                )
-                            }
 
-                            Log.d("WeatherAPI", "Fetched Weather for Analysis: $weatherResponse")
-
-                            // Process and use fetched weather data
-                            val maxTemp = weatherResponse.daily.temperatureMax[1]
-                            val minTemp = weatherResponse.daily.temperatureMin[1]
-
-                            val weatherRequest = WeatherAnalysisRequest(
-                                maxTemp = maxTemp,
-                                minTemp = minTemp,
-                                maxRain = weatherResponse.daily.precipitationSum.maxOrNull() ?: 0.0,
-                                minRain = weatherResponse.daily.precipitationSum.minOrNull() ?: 0.0,
+                        val analysisResponse = RetrofitClient.cropAnalysisBackend.analyzeAuto(
+                            WeatherAnalysisAutoRequest(
+                                latitude = latitude,
+                                longitude = longitude,
                                 cropNames = userCrops
                             )
+                        )
 
-                            Log.d("WeatherAPI", "Calling Weather Analysis API with request: $weatherRequest")
-
-                            val analysisResponse = RetrofitClient.instance.getWeatherAnalysis(weatherRequest)
-                            if (analysisResponse.isSuccessful) {
+                        if (analysisResponse.isSuccessful) {
                                 val cropAnalysisData = analysisResponse.body()
                                 Log.d("WeatherAPI", "Weather Analysis Response: $cropAnalysisData")
                                 cropAnalyses.clear()
@@ -154,9 +137,7 @@ class CropAnalysisFragment : Fragment() {
                     } else {
                         Log.e("ProfileAPI", "User profile is null")
                     }
-                } else {
-                    Log.e("ProfileAPI", "Error fetching profile: ${profileResponse.errorBody()?.string()}")
-                }
+
             } catch (e: Exception) {
                 Log.e("WeatherAPI", "Exception occurred while fetching weather analysis: ${e.message}")
             }

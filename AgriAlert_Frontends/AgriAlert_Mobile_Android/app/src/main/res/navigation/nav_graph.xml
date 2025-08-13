@@ -28,11 +28,20 @@
 
     </fragment>
 
+
+
     <fragment
         android:id="@+id/nav_settings"
         android:name="ma.ensaj.agri_alert.view.fragments.SettingsFragment"
         android:label="Settings"
         tools:layout="@layout/fragment_settings" >
 
+
     </fragment>
+
+    <activity
+        android:id="@+id/nav_chatbot"
+        android:name="ma.ensaj.agri_alert.ChatBotActivity"
+        android:label="Chatbot"
+        tools:layout="@layout/activity_chat_bot" />
 </navigation>

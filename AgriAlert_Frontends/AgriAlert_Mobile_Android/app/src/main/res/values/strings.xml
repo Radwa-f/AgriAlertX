@@ -44,6 +44,9 @@
         <item>Black Pepper</item>
         <item>Cardamom</item>
         <item>Turmeric</item>
+        <item>Chickpea</item>
+        <item>Grapes</item>
+        <item>Mothbeans</item>
     </string-array>
 
     <string-array name="crop_harvest_times">
@@ -71,6 +74,8 @@
         <item>December-January</item> <!-- Black Pepper -->
         <item>September-October</item> <!-- Cardamom -->
         <item>December-January</item> <!-- Turmeric -->
+        <item>August-September</item>
+        <item>June-July</item>
     </string-array>
     <string name="title_activity_location">LocationActivity</string>
 

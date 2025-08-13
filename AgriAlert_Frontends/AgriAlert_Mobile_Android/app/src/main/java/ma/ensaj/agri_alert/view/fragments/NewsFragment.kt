@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ma.ensaj.agri_alert.databinding.FragmentNewsBinding
 import ma.ensaj.agri_alert.model.NewsItem
-import ma.ensaj.agri_alert.network.RetrofitInstance
+import ma.ensaj.agri_alert.network.RetrofitClient
 import ma.ensaj.agri_alert.view.adapters.NewsAdapter
 
 class NewsFragment : Fragment() {
@@ -62,22 +62,15 @@ class NewsFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 val response = withContext(Dispatchers.IO) {
-                    RetrofitInstance.api.getNews(
-                        text = "agriculture",
-                        sourceCountry = "ma",
-                        number = 10,
-                        apiKey = "a123c81e8bbc40e19bb08250fbf52a88"
-                    )
+                    RetrofitClient.newsApi.getNews(country = "ma") // or dynamic
                 }
 
                 if (response.news.isNotEmpty()) {
-                    originalNewsList = response.news.sortedWith(compareBy<NewsItem> {
-                        // Prioritize titles starting with "A"
-                        it.title?.startsWith("A", ignoreCase = true) == false
-                    }.thenBy {
-                        // Sort alphabetically as a fallback
-                        it.title
-                    })
+                    originalNewsList = response.news.sortedWith(
+                        compareBy<NewsItem> {
+                            it.title?.startsWith("A", ignoreCase = true) == false
+                        }.thenBy { it.title }
+                    )
                     setupRecyclerView(originalNewsList)
                 } else {
                     Log.e("NewsFragment", "No news data available.")
@@ -87,6 +80,7 @@ class NewsFragment : Fragment() {
             }
         }
     }
+
 
     private fun filterNews(query: String) {
         if (::newsAdapter.isInitialized) { // Ensure the adapter is initialized

@@ -28,6 +28,7 @@ public class AppUserService implements UserDetailsService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ConfirmationTokenService confirmationTokenService;
     private final LocationRepository locationRepository;
+    //private final KafkaProducerService kafkaProducerService;
 
     @Override
     public UserDetails loadUserByUsername(String email)
@@ -95,6 +96,7 @@ public class AppUserService implements UserDetailsService {
         // Associate with user and save user
         appUser.setLocation(location);
         appUserRepository.save(appUser);
+
 
         return "Location updated successfully!";
     }

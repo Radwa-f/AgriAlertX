@@ -41,7 +41,7 @@
                 android:id="@+id/iv_user_profile"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_farmer"
+                android:src="@drawable/ic_profile"
                 android:contentDescription="profile"
                 android:backgroundTint="@color/my_dark"
                 android:scaleType="centerCrop" />

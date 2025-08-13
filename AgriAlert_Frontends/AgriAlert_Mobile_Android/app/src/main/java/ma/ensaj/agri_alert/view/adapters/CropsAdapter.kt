@@ -11,9 +11,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import ma.ensaj.agri_alert.CropsDetailsActivity
 import ma.ensaj.agri_alert.R
+import ma.ensaj.agri_alert.model.BackendImageResponse
 import ma.ensaj.agri_alert.model.Crop
-import ma.ensaj.agri_alert.network.RetrofitUnsplash
-import ma.ensaj.agri_alert.network.UnsplashPhotoResponse
+import ma.ensaj.agri_alert.network.RetrofitClient
+
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -36,30 +37,25 @@ class CropsAdapter(
         val query = crop.name
 
         // Fetch image for the crop using Unsplash API
-        RetrofitUnsplash.api.getRandomPhoto(
-            clientId = "SS9TfnNCVbvw9318k1VjoWy7je20hdrVy3_2BlgFmFE",
-            query = query
-        ).enqueue(object : Callback<UnsplashPhotoResponse> {
-            override fun onResponse(
-                call: Call<UnsplashPhotoResponse>,
-                response: Response<UnsplashPhotoResponse>
-            ) {
-                if (response.isSuccessful) {
-                    val imageUrl = response.body()?.urls?.regular
+        RetrofitClient.imagesApi.getCropImage(crop.name)
+            .enqueue(object : Callback<BackendImageResponse> {
+                override fun onResponse(
+                    call: Call<BackendImageResponse>,
+                    response: Response<BackendImageResponse>
+                ) {
+                    val imageUrl = response.body()?.url
                     Glide.with(holder.itemView.context)
-                        .load(imageUrl)
+                        .load(imageUrl ?: R.drawable.ic_corn)
                         .placeholder(R.drawable.ic_corn)
                         .into(holder.cropImageView)
                 }
-            }
+                override fun onFailure(call: Call<BackendImageResponse>, t: Throwable) {
+                    Glide.with(holder.itemView.context)
+                        .load(R.drawable.ic_crops)
+                        .into(holder.cropImageView)
+                }
+            })
 
-            override fun onFailure(call: Call<UnsplashPhotoResponse>, t: Throwable) {
-
-                Glide.with(holder.itemView.context)
-                    .load(R.drawable.ic_crops) // Fallback image
-                    .into(holder.cropImageView)
-            }
-        })
     }
 
     override fun getItemCount(): Int = crops.size

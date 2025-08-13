@@ -30,10 +30,10 @@ class HomeActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Set up OnClickListener for the chatbot icon
-        binding.ivChatbot.setOnClickListener {
-            val intent = Intent(this, ChatBotActivity::class.java) // Use 'this' instead of 'requireContext'
-            startActivity(intent)
-        }
+        //binding.ivChatbot.setOnClickListener {
+          //  val intent = Intent(this, ChatBotActivity::class.java) // Use 'this' instead of 'requireContext'
+            //startActivity(intent)
+        //}
         binding.ivProfile.setOnClickListener {
             val intent = Intent(this, UserProfileActivity::class.java)
             startActivity(intent)

@@ -14,7 +14,7 @@ import kotlinx.coroutines.withContext
 import ma.ensaj.agri_alert.databinding.ActivityWeatherBinding
 import ma.ensaj.agri_alert.model.Daily
 import ma.ensaj.agri_alert.model.WeatherResponse
-import ma.ensaj.agri_alert.network.WeatherApi
+import ma.ensaj.agri_alert.network.RetrofitClient
 
 class WeatherActivity : AppCompatActivity() {
 
@@ -53,13 +53,7 @@ class WeatherActivity : AppCompatActivity() {
         lifecycleScope.launch {
             try {
                 val weatherResponse = withContext(Dispatchers.IO) {
-                    WeatherApi.retrofitService.getWeather(
-                        latitude = latitude,
-                        longitude = longitude,
-                        daily = "temperature_2m_max,temperature_2m_min,precipitation_sum",
-                        hourly = "precipitation",
-                        timezone = "auto"
-                    )
+                    RetrofitClient.weatherBackend.getWeather(latitude, longitude)
                 }
                 Log.d("WeatherAPI", "Weather data fetched: $weatherResponse")
                 updateUIWithWeatherData(weatherResponse)

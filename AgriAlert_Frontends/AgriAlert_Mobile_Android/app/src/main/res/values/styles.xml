@@ -17,4 +17,16 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
+    <style name="Theme.AgriAlertX" parent="Theme.Material3.Light.NoActionBar" />
+
+    <!-- Rounded shape for header image -->
+    <style name="Shape.Rounded16">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <style name="Shape">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
 </resources>

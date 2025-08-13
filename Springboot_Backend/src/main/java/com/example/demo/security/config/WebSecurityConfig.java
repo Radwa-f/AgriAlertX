@@ -44,6 +44,10 @@ public class WebSecurityConfig {
                                 "/api/v1/login/**",
                                 "/api/v1/registration/**",
                                 "/api/crops/**",
+                                "/api/news/**",
+                                "/api/images/**",
+                                "/api/weather/**",
+                                "/api/crops/weather-analysis/**",
                                 "/swagger-ui/**", "/v3/api-docs/**",
                                 "/forgotPassword/**",
                                 "/changePassword/**"

@@ -34,7 +34,6 @@ import ma.ensaj.agri_alert.AlertsActivity
 import ma.ensaj.agri_alert.R
 import ma.ensaj.agri_alert.databinding.FragmentHomeBinding
 import ma.ensaj.agri_alert.model.WeatherResponse
-import ma.ensaj.agri_alert.network.WeatherApi
 import ma.ensaj.agri_alert.ChatBotActivity
 import ma.ensaj.agri_alert.CropsDetailsActivity
 import ma.ensaj.agri_alert.RemindersActivity
@@ -42,7 +41,7 @@ import ma.ensaj.agri_alert.WeatherActivity
 import ma.ensaj.agri_alert.model.Alert
 import ma.ensaj.agri_alert.model.Crop
 import ma.ensaj.agri_alert.model.CropAnalysisResponse
-import ma.ensaj.agri_alert.model.WeatherAnalysisRequest
+import ma.ensaj.agri_alert.model.WeatherAnalysisAutoRequest
 import ma.ensaj.agri_alert.network.RetrofitClient
 import ma.ensaj.agri_alert.util.SharedPreferencesHelper
 import ma.ensaj.agri_alert.view.adapters.AlertsAdapter
@@ -192,14 +191,9 @@ class HomeFragment : Fragment() {
 
                         fetchCityName(latitude, longitude)
                         val weatherResponse = withContext(Dispatchers.IO) {
-                            WeatherApi.retrofitService.getWeather(
-                                latitude = latitude,
-                                longitude = longitude,
-                                daily = "temperature_2m_max,temperature_2m_min,precipitation_sum",
-                                hourly = "precipitation",
-                                timezone = "auto"
-                            )
+                            RetrofitClient.weatherBackend.getWeather(latitude, longitude)
                         }
+
 
                         Log.d("WeatherAPI", "Response: $weatherResponse")
                         updateWeatherCard(weatherResponse)
@@ -316,76 +310,37 @@ class HomeFragment : Fragment() {
     }
 
 
-    private fun fetchWeatherAnalysis() {
-        val token = SharedPreferencesHelper.getToken(requireContext())
-        if (token.isNullOrEmpty()) {
-            Log.e("ProfileAPI", "Authorization token is missing")
-            return
-        }
+    // 3) Use the coords you stored; ensure UI update on Main and make view visible
+    private suspend fun fetchWeatherAnalysis() {
+        val token = SharedPreferencesHelper.getToken(requireContext()) ?: return
+        val profileResp = RetrofitClient.instance.getUserProfile("Bearer $token")
+        val user = profileResp.body() ?: return
+        val userCrops = user.crops
 
-        lifecycleScope.launch {
-            try {
-                // Fetch user profile to get crops
-                val profileResponse = RetrofitClient.instance.getUserProfile("Bearer $token")
-                if (profileResponse.isSuccessful) {
-                    val userProfile = profileResponse.body()
-                    if (userProfile != null) {
-                        val userCrops = userProfile.crops
-                        Log.d("ProfileAPI", "Fetched Crops: $userCrops")
+        // fallback if somehow coords missing
+        val lat = latitude ?: user.location?.latitude ?: return
+        val lon = longitude ?: user.location?.longitude ?: return
 
-                        // Fetch weather data
-                        val latitude = userProfile.location?.latitude
-                        val longitude = userProfile.location?.longitude
-                        if (latitude != null && longitude != null) {
-                            val weatherResponse = withContext(Dispatchers.IO) {
-                                WeatherApi.retrofitService.getWeather(
-                                    latitude = latitude,
-                                    longitude = longitude,
-                                    daily = "temperature_2m_max,temperature_2m_min,precipitation_sum",
-                                    hourly = "precipitation",
-                                    timezone = "auto"
-                                )
-                            }
+        val resp = RetrofitClient.cropAnalysisBackend.analyzeAuto(
+            WeatherAnalysisAutoRequest(latitude = lat, longitude = lon, cropNames = userCrops)
+        )
 
-                            Log.d("WeatherAPI", "Fetched Weather for Analysis: $weatherResponse")
-
-                            // Process and use fetched weather data
-                            val maxTemp = weatherResponse.daily.temperatureMax[1]
-                            val minTemp = weatherResponse.daily.temperatureMin[1]
-
-                            val weatherRequest = WeatherAnalysisRequest(
-                                maxTemp = maxTemp,
-                                minTemp = minTemp,
-                                maxRain = weatherResponse.daily.precipitationSum.maxOrNull() ?: 0.0,
-                                minRain = weatherResponse.daily.precipitationSum.minOrNull() ?: 0.0,
-                                cropNames = userCrops
-                            )
-
-                            Log.d("WeatherAPI", "Calling Weather Analysis API with request: $weatherRequest")
-
-                            val analysisResponse = RetrofitClient.instance.getWeatherAnalysis(weatherRequest)
-                            if (analysisResponse.isSuccessful) {
-                                val cropAnalysisData = analysisResponse.body()
-                                Log.d("WeatherAPI", "Weather Analysis Response: $cropAnalysisData")
-                                fetchAndDisplayAlerts(cropAnalysisData)
-
-                            } else {
-                                Log.e("WeatherAPI", "Error fetching analysis: ${analysisResponse.errorBody()?.string()}")
-                            }
-                        } else {
-                            Log.e("ProfileAPI", "User location is missing for weather analysis")
-                        }
-                    } else {
-                        Log.e("ProfileAPI", "User profile is null")
-                    }
+        if (resp.isSuccessful) {
+            val data = resp.body()
+            val alerts = data?.cropAnalyses?.values?.flatMap { it.alerts }.orEmpty()
+            withContext(Dispatchers.Main) {
+                if (alerts.isNotEmpty()) {
+                    binding.rvDailyInsights.adapter = AlertsAdapter(alerts)
+                    binding.rvDailyInsights.visibility = View.VISIBLE   // <- ensure visible
                 } else {
-                    Log.e("ProfileAPI", "Error fetching profile: ${profileResponse.errorBody()?.string()}")
+                    binding.rvDailyInsights.visibility = View.GONE
                 }
-            } catch (e: Exception) {
-                Log.e("WeatherAPI", "Exception occurred while fetching weather analysis: ${e.message}")
             }
+        } else {
+            Log.e("WeatherAPI", "analysis error: ${resp.errorBody()?.string()}")
         }
     }
+
 
     private fun displayCrops(userCrops: List<String>) {
         if (userCrops.isNotEmpty()) {

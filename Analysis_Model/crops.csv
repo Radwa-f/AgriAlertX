@@ -1,0 +1,52 @@
+name,minTemp,maxTemp,minRain,maxRain,minHumidity,maxHumidity,growing_season_days,notes
+Rice,15,27,100,150,70,85,120-150,Flooded conditions preferred
+Wheat,12,25,25,75,60,75,120-180,Winter varieties more cold tolerant
+Maize,15,27,65,125,60,80,90-120,Sensitive to frost
+Millets,20,35,25,75,50,70,70-120,Drought tolerant
+Bajra (Pearl Millet),25,35,25,60,45,65,70-110,Extremely drought tolerant
+Pulses (Kharif),20,27,25,60,60,75,90-120,Nitrogen fixing legumes
+Lentil (Rabi),15,25,25,50,55,70,110-140,Cool season crop
+Oilseeds,15,30,30,50,55,75,90-150,Varies by species
+Groundnut,20,30,50,75,65,80,90-140,Requires calcium for pod development
+Sugarcane,20,35,85,165,70,85,300-365,Perennial crop
+Sugar beet,10,25,25,50,60,80,160-200,Cool season alternative to sugarcane
+Cotton,18,27,60,110,55,75,180-240,Long growing season
+Tea,15,35,100,250,75,90,365,Perennial evergreen
+Coffee,15,28,125,225,70,85,365,Perennial with seasonal harvest
+Cocoa,18,35,100,250,80,90,365,Requires shade and high humidity
+Rubber,27,27,150,250,80,90,365,Constant high temperature and humidity
+Jute,25,35,150,250,75,90,120-150,Fiber crop requiring high moisture
+Flax,10,20,15,20,60,75,110-130,Cool climate fiber crop
+Coconut,27,27,100,250,70,85,365,Tropical palm requiring consistent conditions
+Oil-palm,27,33,250,400,80,90,365,Highest water requirement tropical crop
+Clove,25,35,200,250,75,85,365,Spice tree requiring high humidity
+Black Pepper,15,40,200,300,70,90,365,Climbing vine spice crop
+Cardamom,10,35,150,400,80,95,365,Shade-loving spice requiring high humidity
+Turmeric,20,30,150,250,70,85,270-300,Rhizome crop
+Soybean,18,30,50,100,60,80,100-140,Protein-rich legume
+Barley,8,22,20,60,55,70,90-120,More cold tolerant than wheat
+Oats,12,24,30,80,60,75,90-120,Cool season cereal
+Rye,5,20,25,70,55,75,120-180,Most cold tolerant cereal
+Sorghum,20,35,40,100,50,70,90-130,Drought tolerant grain
+Sunflower,15,25,40,80,55,75,90-130,Oil seed crop
+Rapeseed/Canola,10,25,35,75,60,80,90-150,Cool season oil crop
+Sesame,20,35,30,70,55,75,90-120,Heat and drought tolerant oil crop
+Potato,10,25,40,80,65,85,90-120,Cool season tuber crop
+Sweet Potato,18,30,75,125,65,80,90-120,Warm season tuber crop
+Cassava,20,35,80,150,60,80,240-300,Drought tolerant root crop
+Tomato,15,30,40,100,60,80,90-150,Warm season vegetable
+Onion,12,28,30,80,55,75,120-180,Cool season bulb crop
+Cabbage,8,25,35,90,65,85,90-120,Cool season leafy vegetable
+Carrot,10,25,30,75,60,80,90-120,Cool season root vegetable
+Beans (Common),15,28,40,100,60,80,90-120,Warm season legume
+Peas,8,22,30,80,65,85,90-120,Cool season legume
+Spinach,5,20,25,60,70,90,45-60,Cool season leafy green
+Lettuce,10,24,30,70,70,85,60-90,Cool season leafy vegetable
+Cucumber,18,32,50,120,65,85,60-90,Warm season vine crop
+Watermelon,20,35,40,120,60,80,90-120,Heat-loving fruit crop
+Apple,8,24,60,120,60,80,150-200,Temperate fruit tree
+Orange,15,30,80,150,65,85,300-365,Subtropical citrus
+Mango,24,35,100,200,65,85,300-365,Tropical fruit tree
+Banana,26,32,120,250,75,90,365,Tropical perennial fruit
+Grapes,12,28,40,120,60,80,180-220,Temperate fruit vine
+Strawberry,10,25,40,100,70,85,120-180,Cool season berry crop

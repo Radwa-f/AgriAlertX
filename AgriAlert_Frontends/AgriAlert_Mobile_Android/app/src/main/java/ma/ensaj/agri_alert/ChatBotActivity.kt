@@ -31,9 +31,7 @@ class ChatBotActivity : AppCompatActivity() {
         supportActionBar?.hide()
         window.statusBarColor = ContextCompat.getColor(this, R.color.my_dark)
 
-        findViewById<CardView>(R.id.card_back).setOnClickListener {
-            onBackPressedDispatcher.onBackPressed() // Trigger the system back action
-        }
+
         // Set up RecyclerView
         val adapter = ChatAdapter(chatMessages)
         binding.rvChatConversation.layoutManager = LinearLayoutManager(this)

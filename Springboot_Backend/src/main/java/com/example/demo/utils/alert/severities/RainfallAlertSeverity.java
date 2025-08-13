@@ -5,7 +5,8 @@ import lombok.Getter;
 @Getter
 public enum RainfallAlertSeverity {
     LOW("Insufficient rainfall"),
-    HIGH("Excessive rainfall");
+    HIGH("Excessive rainfall"),
+    MEDIUM("Slight off rainfall");
 
     private final String description;
 

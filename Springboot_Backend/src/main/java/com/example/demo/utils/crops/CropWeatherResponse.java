@@ -10,8 +10,18 @@ import java.util.Map;
 
 @Data
 public class CropWeatherResponse {
+    private String id;
     private Map<String, CropAnalysis> cropAnalyses;
     private List<String> errors;  // Added this field
+
+    public String getRequestId() {
+        return this.cropAnalyses.toString();
+    }
+
+    public void setRequestId(String s) {
+        this.id = s;
+
+    }
 
 
     @Data

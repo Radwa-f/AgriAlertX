@@ -17,9 +17,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ma.ensaj.agri_alert.CropsDetailsActivity
 import ma.ensaj.agri_alert.R
-import ma.ensaj.agri_alert.model.WeatherAnalysisRequest
+import ma.ensaj.agri_alert.model.WeatherAnalysisAutoRequest
 import ma.ensaj.agri_alert.network.RetrofitClient
-import ma.ensaj.agri_alert.network.WeatherApi
 import ma.ensaj.agri_alert.util.SharedPreferencesHelper
 
 class CropAnalysisWorker(context: Context, workerParams: WorkerParameters) : CoroutineWorker(context, workerParams) {
@@ -34,20 +33,7 @@ class CropAnalysisWorker(context: Context, workerParams: WorkerParameters) : Cor
 
         return try {
             // Fetch weather data
-            val weatherResponse = withContext(Dispatchers.IO) {
-                WeatherApi.retrofitService.getWeather(
-                    latitude = latitude,
-                    longitude = longitude,
-                    daily = "temperature_2m_max,temperature_2m_min,precipitation_sum",
-                    hourly = "precipitation",
-                    timezone = "auto"
-                )
-            }
 
-            val maxTemp = weatherResponse.daily.temperatureMax[1]
-            val minTemp = weatherResponse.daily.temperatureMin[1]
-            val maxRain = weatherResponse.daily.precipitationSum.maxOrNull() ?: 0.0
-            val minRain = weatherResponse.daily.precipitationSum.minOrNull() ?: 0.0
 
             // Fetch crop analysis
             val userProfileResponse = withContext(Dispatchers.IO) {
@@ -57,17 +43,13 @@ class CropAnalysisWorker(context: Context, workerParams: WorkerParameters) : Cor
             if (userProfileResponse.isSuccessful) {
                 val userCrops = userProfileResponse.body()?.crops ?: return Result.failure()
 
-                val request = WeatherAnalysisRequest(
-                    maxTemp = maxTemp,
-                    minTemp = minTemp,
-                    maxRain = maxRain,
-                    minRain = minRain,
-                    cropNames = userCrops
+                val analysisResponse = RetrofitClient.cropAnalysisBackend.analyzeAuto(
+                    WeatherAnalysisAutoRequest(
+                        latitude = location.first,
+                        longitude = location.second,
+                        cropNames = userCrops
+                    )
                 )
-
-                val analysisResponse = withContext(Dispatchers.IO) {
-                    RetrofitClient.instance.getWeatherAnalysis(request)
-                }
 
                 if (analysisResponse.isSuccessful) {
                     val cropAnalysisData = analysisResponse.body()

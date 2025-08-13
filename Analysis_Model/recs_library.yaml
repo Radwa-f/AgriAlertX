@@ -1,0 +1,44 @@
+# recs_library.yaml
+temperature:
+  high:
+    low: |
+      For {{crop}}, shade during midday and irrigate in early morning/late afternoon to limit stress.
+    medium: |
+      Heat stress expected for {{crop}}. Use shade nets, mulch to reduce evap, and avoid midday operations next 24–48h.
+    high: |
+      Extreme heat for {{crop}}. Prioritize emergency cooling (mist/evaporative), frequent light irrigation, and temporary shade.
+  low:
+    low: |
+      Cool spell for {{crop}}. Light mulch to retain warmth; delay foliar sprays during dawn/dusk chill.
+    medium: |
+      Frost risk for {{crop}}. Use row covers/frost blankets overnight; irrigate before sunrise to buffer temperature.
+    high: |
+      Severe cold risk for {{crop}}. Protect with greenhouse/plastic tunnels; deploy heaters or anti-frost irrigation if available.
+
+rain:
+  low:
+    low: |
+      Drier than ideal for {{crop}}. Increase irrigation frequency slightly and monitor soil moisture.
+    medium: |
+      Drought stress likely for {{crop}}. Switch to drip/micro-sprinklers and apply mulch to conserve moisture.
+    high: |
+      Severe drought risk for {{crop}}. Initiate emergency irrigation schedule and prioritize high-value plots.
+  high:
+    low: |
+      Wet conditions for {{crop}}. Improve drainage around beds; avoid waterlogging.
+    medium: |
+      Waterlogging risk. Open furrows/ditches; raise beds for {{crop}} if feasible.
+    high: |
+      Flooding possible. Create drainage channels, move containers/seedlings to higher ground, protect root zones.
+
+humidity:
+  high:
+    any: |
+      High RH favors foliar disease in {{crop}}. Improve airflow, avoid late overhead irrigation, scout for fungal symptoms.
+  low:
+    any: |
+      Low RH increases transpiration for {{crop}}. Mulch and adjust irrigation to shorter, more frequent cycles.
+
+ml:
+  disagree: |
+    Based on short-term conditions (T={{tmean}}°C, RH={{rhmean}}%, Rain={{rain}}mm, pH={{ph}}), consider trialing {{alt1}} ({{alt1p}}%) on a small plot; also viable: {{alt2}} ({{alt2p}}%).

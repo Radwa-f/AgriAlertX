@@ -99,9 +99,6 @@ dependencies {
 
     implementation ("com.google.android.gms:play-services-maps:18.1.0")
 
-    // Room components
-    implementation ("androidx.room:room-runtime:2.6.1")
-    annotationProcessor ("androidx.room:room-compiler:2.6.1")
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
@@ -112,5 +109,58 @@ dependencies {
     implementation ("androidx.appcompat:appcompat:1.6.1")
     implementation ("com.github.bumptech.glide:glide:4.15.1")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.15.1")
+
+
+
+    // Material Design 3
+    implementation ("com.google.android.material:material:1.11.0")
+
+// Glassmorphism Effects
+    // Glassmorphism Effects
+    implementation ("com.github.Dimezis:BlurView:version-3.1.0")
+
+
+// Smooth Animations
+    implementation ("com.airbnb.android:lottie:6.2.0")
+
+// Shimmer Loading Effects
+    implementation ("com.facebook.shimmer:shimmer:0.5.0")
+
+// Custom CardViews with Advanced Styling
+    implementation ("io.github.florent37:shapeofview:1.4.7")
+
+// Glide
+    implementation ("com.github.bumptech.glide:glide:4.15.1")
+    kapt ("com.github.bumptech.glide:compiler:4.15.1")
+
+    val room_version = "2.7.2"
+
+    implementation("androidx.room:room-runtime:$room_version")
+
+
+    // If this project only uses Java source, use the Java annotationProcessor
+    // No additional plugins are necessary
+    annotationProcessor("androidx.room:room-compiler:$room_version")
+
+    // optional - Kotlin Extensions and Coroutines support for Room
+    implementation("androidx.room:room-ktx:$room_version")
+
+    // optional - RxJava2 support for Room
+    implementation("androidx.room:room-rxjava2:$room_version")
+
+    // optional - RxJava3 support for Room
+    implementation("androidx.room:room-rxjava3:$room_version")
+
+    // optional - Guava support for Room, including Optional and ListenableFuture
+    implementation("androidx.room:room-guava:$room_version")
+
+    // optional - Test helpers
+    testImplementation("androidx.room:room-testing:$room_version")
+
+    // optional - Paging 3 Integration
+    implementation("androidx.room:room-paging:$room_version")
+
+    // app/build.gradle
+    implementation("com.google.android.material:material:1.12.0")
 
 }
