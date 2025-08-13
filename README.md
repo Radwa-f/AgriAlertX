@@ -79,7 +79,7 @@ AgriAlertX/
 
 ## APIs
 
-### Spring Boot (default `http://localhost:8087`)
+### Spring Boot 
 **POST** `/api/crops/weather-analysis/auto`
 ```json
 {
@@ -108,12 +108,12 @@ AgriAlertX/
 }
 ```
 
-### FastAPI ML (default `http://localhost:8001`)
+### FastAPI ML 
 - `GET /health` → `{"ok": true}`
 - `GET /ml/status` → `{ loaded, ok, meta: { features, classes, metrics } }`
 - `POST /analyze` → accepts weather slices + crops, returns per-crop analysis.
 
-### Flask Chatbot (default `http://localhost:8086`)
+### Flask Chatbot 
 - `POST /chat` → `{ "message": "..." }` → chatbot reply.
 
 ---
@@ -122,11 +122,11 @@ AgriAlertX/
 
 Hold-out and CV on crop recommendation dataset (**temperature, humidity, rainfall, pH**; graceful fallback when pH missing).
 
-| Setting            | Accuracy | Macro-F1 | Notes                              |
-| ------------------ | :------: | :------: | ---------------------------------- |
-| **with pH**        |  **0.793**  | **0.787** | Best offline scores                |
-| **assumed pH=6.5** |   0.732  |  0.696   | Degrades when soil pH not provided |
-| **5-fold CV**      | 0.782±0.010 | 0.774±0.012 | Stable across folds                |
+| Setting            | Accuracy | Macro-F1 |
+| ------------------ | :------: | :------: |
+| **with pH**        |  **0.793**  | **0.787** |
+| **assumed pH=6.5** |   0.732  |  0.696   |
+| **5-fold CV**      | 0.782±0.010 | 0.774±0.012 |
 
 > Reproduce:
 > `python Analysis_Model/evaluate.py --data Crop_recommendation.csv --model crop_suitability_lr.pkl --assumed_ph 6.5 --out metrics.json`
